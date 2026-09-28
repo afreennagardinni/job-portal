@@ -1,0 +1,456 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <!-- Welcome Header -->
+    <div class="bg-gradient-to-r from-purple-700 to-indigo-700 rounded-2xl p-8 mb-8 text-white shadow-lg">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+            <div>
+                <h1 class="text-3xl font-bold">Welcome back Admin  {{ user.username }}! 🎉</h1>
+                <p class="text-purple-100 mt-2">Here's what's happening on JobPortal today.</p>
+            </div>
+            <div class="mt-4 md:mt-0 flex items-center space-x-4">
+                <div class="bg-white bg-opacity-20 rounded-xl px-4 py-2">
+                    <i class="fas fa-calendar mr-2"></i>{{ current_date|date:"F d, Y" }}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Stats Row -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+            <div class="bg-white bg-opacity-10 rounded-xl p-3">
+                <div class="text-yellow-300 text-sm">Member Since</div>
+                <div class="font-semibold">{{ user.date_joined|date:"M Y" }}</div>
+            </div>
+            <div class="bg-white bg-opacity-10 rounded-xl p-3">
+                <div class="text-yellow-300 text-sm">Last Login</div>
+                <div class="font-semibold">{{ user.last_login|date:"M d, Y" }}</div>
+            </div>
+            <div class="bg-white bg-opacity-10 rounded-xl p-3">
+                <div class="text-yellow-300 text-sm">Account Status</div>
+                <div class="font-semibold flex items-center"><span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>Active</div>
+            </div>
+            <div class="bg-white bg-opacity-10 rounded-xl p-3">
+                <div class="text-yellow-300 text-sm">Email</div>
+                <div class="font-semibold text-sm truncate">{{ user.email }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <!-- Total Users Card -->
+        <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-purple-500 hover:shadow-xl transition">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">Total Users</p>
+                    <h3 class="text-3xl font-bold text-gray-800">{{ total_users }}</h3>
+                    <p class="text-xs text-green-600 mt-2">
+                        <i class="fas fa-arrow-up mr-1"></i>+{{ new_users_week }} this week
+                    </p>
+                </div>
+                <div class="bg-purple-100 p-4 rounded-full">
+                    <i class="fas fa-users text-purple-600 text-2xl"></i>
+                </div>
+            </div>
+            <div class="mt-4 flex justify-between text-sm">
+                <span class="text-blue-600"><i class="fas fa-user-tie mr-1"></i>{{ total_employers }} Employers</span>
+                <span class="text-green-600"><i class="fas fa-user mr-1"></i>{{ total_job_seekers }} Seekers</span>
+            </div>
+        </div>
+
+        <!-- Total Jobs Card -->
+        <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-500 hover:shadow-xl transition">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">Total Jobs</p>
+                    <h3 class="text-3xl font-bold text-gray-800">{{ total_jobs }}</h3>
+                    <p class="text-xs text-green-600 mt-2">
+                        <i class="fas fa-arrow-up mr-1"></i>+{{ new_jobs_week }} this week
+                    </p>
+                </div>
+                <div class="bg-blue-100 p-4 rounded-full">
+                    <i class="fas fa-briefcase text-blue-600 text-2xl"></i>
+                </div>
+            </div>
+            <div class="mt-4 flex justify-between text-sm">
+                <span class="text-green-600"><i class="fas fa-check-circle mr-1"></i>{{ active_jobs }} Active</span>
+                <span class="text-gray-500"><i class="fas fa-clock mr-1"></i>{{ inactive_jobs }} Inactive</span>
+            </div>
+        </div>
+
+        <!-- Total Applications Card -->
+        <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-500 hover:shadow-xl transition">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">Applications</p>
+                    <h3 class="text-3xl font-bold text-gray-800">{{ total_applications }}</h3>
+                    <p class="text-xs text-green-600 mt-2">
+                        <i class="fas fa-arrow-up mr-1"></i>+{{ new_apps_week }} this week
+                    </p>
+                </div>
+                <div class="bg-green-100 p-4 rounded-full">
+                    <i class="fas fa-file-alt text-green-600 text-2xl"></i>
+                </div>
+            </div>
+            <div class="mt-4 grid grid-cols-2 gap-2 text-xs">
+                <span class="text-yellow-600"><i class="fas fa-clock mr-1"></i>{{ pending_apps }} Pending</span>
+                <span class="text-blue-600"><i class="fas fa-search mr-1"></i>{{ reviewed_apps }} Reviewed</span>
+                <span class="text-green-600"><i class="fas fa-check-circle mr-1"></i>{{ shortlisted_apps }} Shortlisted</span>
+                <span class="text-purple-600"><i class="fas fa-star mr-1"></i>{{ hired_apps }} Hired</span>
+            </div>
+        </div>
+
+        <!-- Categories Card -->
+        <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-amber-500 hover:shadow-xl transition">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">Categories</p>
+                    <h3 class="text-3xl font-bold text-gray-800">{{ total_categories }}</h3>
+                    <p class="text-xs text-gray-500 mt-2">Active job categories</p>
+                </div>
+                <div class="bg-amber-100 p-4 rounded-full">
+                    <i class="fas fa-tags text-amber-600 text-2xl"></i>
+                </div>
+            </div>
+            <div class="mt-4">
+                <div class="flex flex-wrap gap-1">
+                    {% for category in top_categories %}
+                    <span class="px-2 py-1 bg-amber-50 text-amber-700 text-xs rounded-full">{{ category.name }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Application Status Chart -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                <i class="fas fa-chart-pie text-purple-500 mr-2"></i>
+                Application Status Distribution
+            </h3>
+            <div class="space-y-4">
+                <!-- Pending -->
+                <div>
+                    <div class="flex justify-between text-sm mb-1">
+                        <span class="text-gray-600">Pending Review</span>
+                        <span class="font-semibold text-amber-600">{{ pending_apps }} ({{ pending_percent }}%)</span>
+                    </div>
+                    <div class="h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-amber-500 rounded-full" style="width: {{ pending_percent }}%"></div>
+                    </div>
+                </div>
+                <!-- Reviewed -->
+                <div>
+                    <div class="flex justify-between text-sm mb-1">
+                        <span class="text-gray-600">Reviewed</span>
+                        <span class="font-semibold text-blue-600">{{ reviewed_apps }} ({{ reviewed_percent }}%)</span>
+                    </div>
+                    <div class="h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-blue-500 rounded-full" style="width: {{ reviewed_percent }}%"></div>
+                    </div>
+                </div>
+                <!-- Shortlisted -->
+                <div>
+                    <div class="flex justify-between text-sm mb-1">
+                        <span class="text-gray-600">Shortlisted</span>
+                        <span class="font-semibold text-green-600">{{ shortlisted_apps }} ({{ shortlisted_percent }}%)</span>
+                    </div>
+                    <div class="h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-green-500 rounded-full" style="width: {{ shortlisted_percent }}%"></div>
+                    </div>
+                </div>
+                <!-- Interview -->
+                <div>
+                    <div class="flex justify-between text-sm mb-1">
+                        <span class="text-gray-600">Interview</span>
+                        <span class="font-semibold text-purple-600">{{ interview_apps }} ({{ interview_percent }}%)</span>
+                    </div>
+                    <div class="h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-purple-500 rounded-full" style="width: {{ interview_percent }}%"></div>
+                    </div>
+                </div>
+                <!-- Hired -->
+                <div>
+                    <div class="flex justify-between text-sm mb-1">
+                        <span class="text-gray-600">Hired</span>
+                        <span class="font-semibold text-emerald-600">{{ hired_apps }} ({{ hired_percent }}%)</span>
+                    </div>
+                    <div class="h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-emerald-500 rounded-full" style="width: {{ hired_percent }}%"></div>
+                    </div>
+                </div>
+                <!-- Rejected -->
+                <div>
+                    <div class="flex justify-between text-sm mb-1">
+                        <span class="text-gray-600">Rejected</span>
+                        <span class="font-semibold text-red-600">{{ rejected_apps }} ({{ rejected_percent }}%)</span>
+                    </div>
+                    <div class="h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-red-500 rounded-full" style="width: {{ rejected_percent }}%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Distribution Chart -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                <i class="fas fa-users text-blue-500 mr-2"></i>
+                User Distribution
+            </h3>
+            <div class="space-y-4">
+                <!-- Job Seekers -->
+                <div>
+                    <div class="flex justify-between text-sm mb-1">
+                        <span class="text-gray-600">Job Seekers</span>
+                        <span class="font-semibold text-green-600">{{ total_job_seekers }} ({{ seeker_percent }}%)</span>
+                    </div>
+                    <div class="h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-green-500 rounded-full" style="width: {{ seeker_percent }}%"></div>
+                    </div>
+                </div>
+                <!-- Employers -->
+                <div>
+                    <div class="flex justify-between text-sm mb-1">
+                        <span class="text-gray-600">Employers</span>
+                        <span class="font-semibold text-blue-600">{{ total_employers }} ({{ employer_percent }}%)</span>
+                    </div>
+                    <div class="h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-blue-500 rounded-full" style="width: {{ employer_percent }}%"></div>
+                    </div>
+                </div>
+                <!-- Admins -->
+                <div>
+                    <div class="flex justify-between text-sm mb-1">
+                        <span class="text-gray-600">Admins</span>
+                        <span class="font-semibold text-purple-600">{{ total_admins }} ({{ admin_percent }}%)</span>
+                    </div>
+                    <div class="h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                        <div class="h-full bg-purple-500 rounded-full" style="width: {{ admin_percent }}%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Job Type Distribution -->
+            <h3 class="text-lg font-semibold text-gray-800 mt-6 mb-4 flex items-center">
+                <i class="fas fa-clock text-amber-500 mr-2"></i>
+                Job Types
+            </h3>
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-gray-50 p-3 rounded-lg text-center">
+                    <span class="text-sm text-gray-600">Full Time</span>
+                    <p class="text-xl font-bold text-blue-600">{{ fulltime_jobs }}</p>
+                </div>
+                <div class="bg-gray-50 p-3 rounded-lg text-center">
+                    <span class="text-sm text-gray-600">Part Time</span>
+                    <p class="text-xl font-bold text-green-600">{{ parttime_jobs }}</p>
+                </div>
+                <div class="bg-gray-50 p-3 rounded-lg text-center">
+                    <span class="text-sm text-gray-600">Remote</span>
+                    <p class="text-xl font-bold text-purple-600">{{ remote_jobs }}</p>
+                </div>
+                <div class="bg-gray-50 p-3 rounded-lg text-center">
+                    <span class="text-sm text-gray-600">Contract</span>
+                    <p class="text-xl font-bold text-amber-600">{{ contract_jobs }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Users Table -->
+    <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-lg font-semibold text-gray-800 flex items-center">
+                <i class="fas fa-user-plus text-green-500 mr-2"></i>
+                Recently Joined Users
+            </h3>
+            <a href="#" class="text-sm text-purple-600 hover:text-purple-800">View All <i class="fas fa-arrow-right ml-1"></i></a>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User Type</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Joined</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for user in recent_users %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3">
+                                    {{ user.username|first|upper }}
+                                </div>
+                                <div class="text-sm font-medium text-gray-900">{{ user.username }}</div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ user.email }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 text-xs rounded-full 
+                                {% if user.user_type == 'employer' %}bg-blue-100 text-blue-800
+                                {% elif user.user_type == 'job_seeker' %}bg-green-100 text-green-800
+                                {% else %}bg-purple-100 text-purple-800{% endif %}">
+                                {{ user.get_user_type_display }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ user.date_joined|timesince }} ago</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 text-xs rounded-full {% if user.is_active %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+                                {{ user.is_active|yesno:"Active,Inactive" }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="px-6 py-4 text-center text-gray-500">No users found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Recent Jobs Table -->
+    <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-lg font-semibold text-gray-800 flex items-center">
+                <i class="fas fa-briefcase text-blue-500 mr-2"></i>
+                Recently Posted Jobs
+            </h3>
+            <a href="{% url 'job_list' %}" class="text-sm text-purple-600 hover:text-purple-800">View All <i class="fas fa-arrow-right ml-1"></i></a>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Job Title</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Company</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Posted By</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Applications</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Posted</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for job in recent_jobs %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ job.title }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ job.company }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ job.employer.username }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ job.applications.count }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 text-xs rounded-full {% if job.is_active %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+                                {{ job.is_active|yesno:"Active,Inactive" }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ job.created_at|timesince }} ago</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="px-6 py-4 text-center text-gray-500">No jobs found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Recent Applications Table -->
+    <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-lg font-semibold text-gray-800 flex items-center">
+                <i class="fas fa-file-alt text-green-500 mr-2"></i>
+                Recent Applications
+            </h3>
+            <a href="#" class="text-sm text-purple-600 hover:text-purple-800">View All <i class="fas fa-arrow-right ml-1"></i></a>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Applicant</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Job</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Company</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Applied</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Resume</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for app in recent_applications %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3">
+                                    {{ app.applicant.username|first|upper }}
+                                </div>
+                                <div class="text-sm font-medium text-gray-900">{{ app.applicant.username }}</div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ app.job.title }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ app.job.company }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ app.applied_at|timesince }} ago</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 text-xs rounded-full 
+                                {% if app.status == 'pending' %}bg-yellow-100 text-yellow-800
+                                {% elif app.status == 'reviewed' %}bg-blue-100 text-blue-800
+                                {% elif app.status == 'shortlisted' %}bg-green-100 text-green-800
+                                {% elif app.status == 'interview' %}bg-purple-100 text-purple-800
+                                {% elif app.status == 'hired' %}bg-emerald-100 text-emerald-800
+                                {% elif app.status == 'rejected' %}bg-red-100 text-red-800
+                                {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                {{ app.get_status_display }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            {% if app.resume %}
+                            <a href="{{ app.resume.url }}" class="text-purple-600 hover:text-purple-800" target="_blank">
+                                <i class="fas fa-file-pdf"></i> View
+                            </a>
+                            {% else %}
+                            <span class="text-gray-400">No file</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="px-6 py-4 text-center text-gray-500">No applications found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Quick Actions Footer -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <a href="{% url 'admin:index' %}" class="bg-purple-50 hover:bg-purple-100 p-4 rounded-xl text-center transition group">
+            <i class="fas fa-cog text-purple-600 text-2xl mb-2 group-hover:rotate-90 transition-transform"></i>
+            <p class="text-sm font-medium text-gray-700">Django Admin</p>
+        </a>
+                <a href="{% url 'admin_applications' %}" class="bg-green-50 hover:bg-green-100 p-4 rounded-xl text-center transition group">
+            <i class="fas fa-file-alt text-green-600 text-2xl mb-2"></i>
+            <p class="text-sm font-medium text-gray-700">All Applications</p>
+        </a>
+        <a href="#" class="bg-green-50 hover:bg-green-100 p-4 rounded-xl text-center transition">
+            <i class="fas fa-users text-green-600 text-2xl mb-2"></i>
+            <p class="text-sm font-medium text-gray-700">Manage Users</p>
+        </a>
+        <a href="#" class="bg-amber-50 hover:bg-amber-100 p-4 rounded-xl text-center transition">
+            <i class="fas fa-chart-line text-amber-600 text-2xl mb-2"></i>
+            <p class="text-sm font-medium text-gray-700">Analytics</p>
+        </a>
+    </div>
+</div>
+{% endblock %}

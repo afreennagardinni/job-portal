@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Confirm Account Deletion{% endblock %}
+{% block content %}
+<div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full">
+        <!-- Final Warning -->
+        <div class="bg-gradient-to-br from-red-600 via-red-700 to-red-800 rounded-2xl p-8 text-white text-center shadow-2xl relative overflow-hidden">
+            <!-- Animated Background -->
+            <div class="absolute top-0 right-0 w-32 h-32 bg-white opacity-5 rounded-full -mr-12 -mt-12 animate-ping"></div>
+            <div class="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-5 rounded-full -ml-12 -mb-12 animate-ping" style="animation-delay: 1s"></div>
+            
+            <div class="relative z-10">
+                <div class="w-28 h-28 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
+                    <i class="fas fa-skull-crossbones text-5xl"></i>
+                </div>
+                
+                <h2 class="text-3xl font-bold mb-4">⚠️ FINAL WARNING ⚠️</h2>
+                <p class="text-red-100 mb-6 text-lg">
+                    You are about to permanently delete your account. This action:
+                </p>
+                
+                <div class="text-left space-y-3 mb-8 bg-red-700 bg-opacity-30 rounded-xl p-6 backdrop-blur">
+                    <div class="flex items-start">
+                        <i class="fas fa-times-circle text-red-300 mt-1 mr-3 flex-shrink-0"></i>
+                        <span class="text-red-100"><span class="font-bold">Cannot be undone</span> or reversed</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-trash-alt text-red-300 mt-1 mr-3 flex-shrink-0"></i>
+                        <span class="text-red-100"><span class="font-bold">Permanently removes</span> all your data</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-file-alt text-red-300 mt-1 mr-3 flex-shrink-0"></i>
+                        <span class="text-red-100">Deletes all <span class="font-bold">job postings and applications</span></span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-envelope text-red-300 mt-1 mr-3 flex-shrink-0"></i>
+                        <span class="text-red-100">Username <span class="font-bold">"{{ user.username }}"</span> will become available</span>
+                    </div>
+                </div>
+
+                <div class="flex space-x-4">
+                    <a href="{% url 'dashboard' %}" 
+                       class="flex-1 bg-white text-red-600 py-4 px-4 rounded-xl font-bold hover:bg-gray-100 transition-colors shadow-lg">
+                        <i class="fas fa-arrow-left mr-2"></i>Go Back to Safety
+                    </a>
+                    <a href="{% url 'delete_account' %}" 
+                       class="flex-1 bg-red-500 text-white py-4 px-4 rounded-xl font-bold hover:bg-red-400 transition-colors shadow-lg hover:shadow-xl">
+                        <i class="fas fa-trash-alt mr-2"></i>I Understand, Proceed
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

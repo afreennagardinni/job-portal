@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block title %}Application Details{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-purple-700 to-indigo-700 rounded-2xl p-6 mb-8 text-white shadow-lg">
+        <h1 class="text-3xl font-bold">Application Details</h1>
+        <p class="text-purple-100 mt-2">Review and update application status</p>
+    </div>
+
+    <!-- Application Details Card -->
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+        <!-- Applicant Info -->
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Applicant Information</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <p class="text-sm text-gray-500">Name</p>
+                    <p class="text-lg font-medium text-gray-900">{{ application.applicant.username }}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Email</p>
+                    <p class="text-lg font-medium text-gray-900">{{ application.applicant.email }}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Phone</p>
+                    <p class="text-lg font-medium text-gray-900">{{ application.applicant.phone_number|default:"Not provided" }}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Applied On</p>
+                    <p class="text-lg font-medium text-gray-900">{{ application.applied_at|date:"F d, Y H:i" }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Job Info -->
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Job Information</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <p class="text-sm text-gray-500">Position</p>
+                    <p class="text-lg font-medium text-gray-900">{{ application.job.title }}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Company</p>
+                    <p class="text-lg font-medium text-gray-900">{{ application.job.company }}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Location</p>
+                    <p class="text-lg font-medium text-gray-900">{{ application.job.location }}</p>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Job Type</p>
+                    <p class="text-lg font-medium text-gray-900">{{ application.job.get_job_type_display }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Application Details -->
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Application Details</h2>
+            
+            <div class="mb-4">
+                <p class="text-sm text-gray-500 mb-2">Cover Letter</p>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    {{ application.cover_letter|linebreaks }}
+                </div>
+            </div>
+            
+            {% if application.expected_salary %}
+            <div>
+                <p class="text-sm text-gray-500">Expected Salary</p>
+                <p class="text-lg font-medium text-gray-900">${{ application.expected_salary }}</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Resume -->
+        <div class="p-6 border-b border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Resume</h2>
+            {% if application.resume %}
+            <a href="{{ application.resume.url }}" target="_blank" 
+               class="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">
+                <i class="fas fa-file-pdf mr-2"></i>View Resume
+            </a>
+            {% else %}
+            <p class="text-gray-500">No resume uploaded</p>
+            {% endif %}
+        </div>
+
+        <!-- Status Update Form -->
+        <div class="p-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Update Status</h2>
+            
+            <form method="POST" class="space-y-4">
+                {% csrf_token %}
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Current Status</label>
+                    <div class="mb-4">
+                        <span class="px-3 py-2 text-sm rounded-full font-semibold
+                            {% if application.status == 'pending' %}bg-yellow-100 text-yellow-800
+                            {% elif application.status == 'reviewed' %}bg-blue-100 text-blue-800
+                            {% elif application.status == 'shortlisted' %}bg-green-100 text-green-800
+                            {% elif application.status == 'interview' %}bg-purple-100 text-purple-800
+                            {% elif application.status == 'hired' %}bg-emerald-100 text-emerald-800
+                            {% elif application.status == 'rejected' %}bg-red-100 text-red-800
+                            {% endif %}">
+                            {{ application.get_status_display }}
+                        </span>
+                    </div>
+                    
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Update Status</label>
+                    <select name="status" class="w-full border border-gray-300 rounded-lg py-2 px-3 focus:ring-2 focus:ring-purple-500">
+                        {% for value, label in status_choices %}
+                        <option value="{{ value }}" {% if application.status == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="flex space-x-4">
+                    <button type="submit" class="bg-purple-600 text-white py-2 px-6 rounded-lg hover:bg-purple-700 transition">
+                        <i class="fas fa-save mr-2"></i>Update Status
+                    </button>
+                    <a href="{% url 'admin_applications' %}" class="bg-gray-500 text-white py-2 px-6 rounded-lg hover:bg-gray-600 transition">
+                        <i class="fas fa-arrow-left mr-2"></i>Back to All Applications
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

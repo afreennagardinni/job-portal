@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Apply for {{ job.title }}{% endblock %}
+{% block content %}
+<div class="max-w-3xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <div class="px-4 py-5 sm:px-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">Apply for: {{ job.title }}</h3>
+            <p class="mt-1 max-w-2xl text-sm text-gray-500">{{ job.company }} - {{ job.location }}</p>
+        </div>
+        
+        <form method="POST" enctype="multipart/form-data" class="border-t border-gray-200">
+            {% csrf_token %}
+            <div class="px-4 py-5 sm:p-6">
+                <div class="space-y-6">
+                    <!-- Cover Letter -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Cover Letter <span class="text-red-500">*</span></label>
+                        <textarea name="cover_letter" rows="6" required 
+                                  class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                                  placeholder="Explain why you're the best candidate for this position..."></textarea>
+                    </div>
+
+                    <!-- Resume Upload -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Resume (PDF/DOC) <span class="text-red-500">*</span></label>
+                        <input type="file" name="resume" accept=".pdf,.doc,.docx" required
+                               class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                        <p class="mt-1 text-xs text-gray-500">Upload your resume in PDF, DOC, or DOCX format.</p>
+                    </div>
+
+                    <!-- Expected Salary -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Expected Salary ($)</label>
+                        <input type="number" name="expected_salary" 
+                               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                               placeholder="Optional">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="px-4 py-3 bg-gray-50 text-right sm:px-6">
+                <a href="{% url 'job_detail' job.id %}" class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 mr-2">
+                    Cancel
+                </a>
+                <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Submit Application
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

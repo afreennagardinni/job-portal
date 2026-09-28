@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}Edit Job{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <div class="px-4 py-5 sm:px-6">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">Edit Job: {{ job.title }}</h3>
+            <p class="mt-1 max-w-2xl text-sm text-gray-500">Update the job details below.</p>
+        </div>
+        
+        <form method="POST" class="border-t border-gray-200">
+            {% csrf_token %}
+            <div class="px-4 py-5 sm:p-6">
+                <div class="grid grid-cols-6 gap-6">
+                    <div class="col-span-6 sm:col-span-3">
+                        <label class="block text-sm font-medium text-gray-700">Job Title</label>
+                        <input type="text" name="title" value="{{ job.title }}" required 
+                               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+
+                    <div class="col-span-6 sm:col-span-3">
+                        <label class="block text-sm font-medium text-gray-700">Company Name</label>
+                        <input type="text" name="company" value="{{ job.company }}" required 
+                               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+
+                    <div class="col-span-6 sm:col-span-3">
+                        <label class="block text-sm font-medium text-gray-700">Category</label>
+                        <select name="category" 
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Select Category</option>
+                            {% for category in categories %}
+                            <option value="{{ category.id }}" {% if job.category and job.category.id == category.id %}selected{% endif %}>
+                                {{ category.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-span-6 sm:col-span-3">
+                        <label class="block text-sm font-medium text-gray-700">Location</label>
+                        <input type="text" name="location" value="{{ job.location }}" required 
+                               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+
+                    <div class="col-span-6 sm:col-span-3">
+                        <label class="block text-sm font-medium text-gray-700">Job Type</label>
+                        <select name="job_type" required 
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Select Type</option>
+                            {% for type_value, type_label in job_types %}
+                            <option value="{{ type_value }}" {% if job.job_type == type_value %}selected{% endif %}>{{ type_label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-span-6 sm:col-span-3">
+                        <label class="block text-sm font-medium text-gray-700">Experience Level</label>
+                        <select name="experience_level" required 
+                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                            <option value="">Select Level</option>
+                            {% for exp_value, exp_label in experience_levels %}
+                            <option value="{{ exp_value }}" {% if job.experience_level == exp_value %}selected{% endif %}>{{ exp_label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-span-6 sm:col-span-3">
+                        <label class="block text-sm font-medium text-gray-700">Minimum Salary ($)</label>
+                        <input type="number" name="salary_min" value="{{ job.salary_min }}" 
+                               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+
+                    <div class="col-span-6 sm:col-span-3">
+                        <label class="block text-sm font-medium text-gray-700">Maximum Salary ($)</label>
+                        <input type="number" name="salary_max" value="{{ job.salary_max }}" 
+                               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+
+                    <div class="col-span-6 sm:col-span-3">
+                        <label class="block text-sm font-medium text-gray-700">Application Deadline</label>
+                        <input type="date" name="application_deadline" value="{{ job.application_deadline|date:'Y-m-d' }}" required 
+                               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+
+                    <div class="col-span-6">
+                        <label class="block text-sm font-medium text-gray-700">Job Description</label>
+                        <textarea name="description" rows="4" required 
+                                  class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">{{ job.description }}</textarea>
+                    </div>
+
+                    <div class="col-span-6">
+                        <label class="block text-sm font-medium text-gray-700">Requirements</label>
+                        <textarea name="requirements" rows="4" required 
+                                  class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500">{{ job.requirements }}</textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="px-4 py-3 bg-gray-50 text-right sm:px-6">
+                <a href="{% url 'my_jobs' %}" class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 mr-2">
+                    Cancel
+                </a>
+                <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Update Job
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

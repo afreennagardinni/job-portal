@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+{% block title %}Application Details{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="mb-4">
+        <a href="{% url 'admin_applications' %}" class="text-blue-600 hover:text-blue-800">← Back to Applications</a>
+    </div>
+
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <!-- Header -->
+        <div class="px-4 py-5 sm:px-6 bg-gray-50">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">
+                Application Details
+            </h3>
+            <p class="mt-1 max-w-2xl text-sm text-gray-500">
+                Application #{{ application.id }} - Submitted {{ application.applied_at|timesince }} ago
+            </p>
+        </div>
+
+        <!-- Update Status Form -->
+        <div class="border-t border-gray-200 px-4 py-5 sm:px-6 bg-blue-50">
+            <form method="POST" class="flex items-center space-x-4">
+                {% csrf_token %}
+                <label class="text-sm font-medium text-gray-700">Update Status:</label>
+                <select name="status" class="border border-gray-300 rounded-md px-3 py-2">
+                    {% for value, label in status_choices %}
+                    <option value="{{ value }}" {% if application.status == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                    Update
+                </button>
+            </form>
+        </div>
+
+        <!-- Applicant Info -->
+        <div class="border-t border-gray-200">
+            <dl>
+                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Applicant</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        <a href="{% url 'admin_user_detail' application.applicant.id %}" class="text-blue-600 hover:text-blue-800">
+                            {{ application.applicant.username }}
+                        </a>
+                    </dd>
+                </div>
+                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Email</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ application.applicant.email }}</dd>
+                </div>
+                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Phone</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ application.applicant.phone_number|default:"Not provided" }}</dd>
+                </div>
+            </dl>
+        </div>
+
+        <!-- Job Info -->
+        <div class="border-t border-gray-200">
+            <div class="px-4 py-5 sm:px-6 bg-gray-50">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Job Details</h3>
+            </div>
+            <dl>
+                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Job Title</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        <a href="{% url 'job_detail' application.job.id %}" class="text-blue-600 hover:text-blue-800">
+                            {{ application.job.title }}
+                        </a>
+                    </dd>
+                </div>
+                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Company</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ application.job.company }}</dd>
+                </div>
+                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Location</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ application.job.location }}</dd>
+                </div>
+                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Posted By</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        <a href="{% url 'admin_user_detail' application.job.employer.id %}" class="text-blue-600 hover:text-blue-800">
+                            {{ application.job.employer.username }}
+                        </a>
+                    </dd>
+                </div>
+            </dl>
+        </div>
+
+        <!-- Application Materials -->
+        <div class="border-t border-gray-200">
+            <div class="px-4 py-5 sm:px-6 bg-gray-50">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Application Materials</h3>
+            </div>
+            <dl>
+                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Cover Letter</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            {{ application.cover_letter|linebreaks }}
+                        </div>
+                    </dd>
+                </div>
+                
+                <!-- RESUME SECTION WITH FILE CHECK - FIXED -->
+                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Resume</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                        {% if application.resume %}
+                            <div class="flex items-center space-x-3">
+                                <a href="{{ application.resume.url }}" 
+                                   class="inline-flex items-center px-4 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition resume-detail-link"
+                                   data-resume-url="{{ application.resume.url }}"
+                                   onclick="return checkResumeFileDetail(this);">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                    <span class="resume-text">Download Resume</span>
+                                </a>
+                                <span class="text-xs text-gray-500 resume-status"></span>
+                            </div>
+                        {% else %}
+                            <span class="text-gray-500">Not uploaded</span>
+                        {% endif %}
+                    </dd>
+                </div>
+
+                {% if application.expected_salary %}
+                <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Expected Salary</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">${{ application.expected_salary }}</dd>
+                </div>
+                {% endif %}
+                
+                <div class="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                    <dt class="text-sm font-medium text-gray-500">Applied On</dt>
+                    <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{{ application.applied_at|date:"F d, Y" }}</dd>
+                </div>
+            </dl>
+        </div>
+
+        <!-- Employer Notes -->
+        {% if application.notes %}
+        <div class="border-t border-gray-200">
+            <div class="px-4 py-5 sm:px-6 bg-gray-50">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Employer Notes</h3>
+            </div>
+            <div class="px-4 py-5 sm:p-6">
+                <p class="text-gray-700">{{ application.notes }}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- JavaScript for Resume File Check -->
+<script>
+function checkResumeFileDetail(element) {
+    const url = element.getAttribute('data-resume-url');
+    const resumeText = element.querySelector('.resume-text') || element;
+    const originalText = resumeText.textContent || element.textContent;
+    const statusSpan = document.querySelector('.resume-status');
+    
+    // Show checking state
+    if (resumeText) {
+        resumeText.textContent = '⏳ Checking...';
+    } else {
+        element.textContent = '⏳ Checking...';
+    }
+    element.style.pointerEvents = 'none';
+    if (statusSpan) statusSpan.textContent = '';
+    
+    // Check if file exists
+    fetch(url, { method: 'HEAD' })
+        .then(response => {
+            // Restore original text
+            if (resumeText) {
+                resumeText.textContent = originalText;
+            } else {
+                element.textContent = originalText;
+            }
+            element.style.pointerEvents = 'auto';
+            
+            if (!response.ok) {
+                // File doesn't exist
+                if (statusSpan) {
+                    statusSpan.textContent = '❌ File not found';
+                    statusSpan.classList.add('text-red-600');
+                } else {
+                    alert('❌ Resume file not found!\n\nThe file may have been deleted or moved.\nPlease contact the applicant to re-upload.');
+                }
+                return false;
+            } else {
+                // File exists - open it
+                if (statusSpan) {
+                    statusSpan.textContent = '✓ Found';
+                    statusSpan.classList.add('text-green-600');
+                    setTimeout(() => {
+                        statusSpan.textContent = '';
+                        statusSpan.classList.remove('text-green-600');
+                    }, 3000);
+                }
+                window.open(url, '_blank');
+                return false;
+            }
+        })
+        .catch(error => {
+            // Restore original text
+            if (resumeText) {
+                resumeText.textContent = originalText;
+            } else {
+                element.textContent = originalText;
+            }
+            element.style.pointerEvents = 'auto';
+            
+            if (statusSpan) {
+                statusSpan.textContent = '❌ Cannot access';
+                statusSpan.classList.add('text-red-600');
+            } else {
+                alert('❌ Cannot access resume file.\nPlease check if the file exists.');
+            }
+            return false;
+        });
+    
+    return false; // Prevent default link behavior
+}
+
+// Auto-check resume on page load (optional)
+document.addEventListener('DOMContentLoaded', function() {
+    const resumeLink = document.querySelector('.resume-detail-link');
+    const statusSpan = document.querySelector('.resume-status');
+    
+    if (resumeLink && statusSpan) {
+        const url = resumeLink.getAttribute('data-resume-url');
+        
+        fetch(url, { method: 'HEAD' })
+            .then(response => {
+                if (response.ok) {
+                    statusSpan.textContent = '✓ Available';
+                    statusSpan.classList.add('text-green-600');
+                } else {
+                    statusSpan.textContent = '❌ Missing';
+                    statusSpan.classList.add('text-red-600');
+                }
+            })
+            .catch(() => {
+                statusSpan.textContent = '❌ Error';
+                statusSpan.classList.add('text-red-600');
+            });
+    }
+});
+</script>
+
+<!-- Optional: Add CSS for better styling -->
+<style>
+    .resume-detail-link {
+        transition: all 0.3s ease;
+    }
+    .resume-detail-link:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    .resume-status {
+        font-size: 0.75rem;
+        transition: all 0.3s ease;
+    }
+</style>
+{% endblock %}

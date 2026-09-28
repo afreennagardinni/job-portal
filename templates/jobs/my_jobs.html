@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}My Jobs{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-0">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-900">My Job Postings</h1>
+            <a href="{% url 'post_job' %}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Post New Job
+            </a>
+        </div>
+
+        {% if jobs %}
+        <div class="bg-white shadow overflow-hidden sm:rounded-md">
+            <ul class="divide-y divide-gray-200">
+                {% for job in jobs %}
+                <li>
+                    <div class="px-4 py-4 sm:px-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center">
+                                    <p class="text-lg font-medium text-blue-600 truncate">{{ job.title }}</p>
+                                    <span class="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                        {% if job.is_active %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+                                        {{ job.is_active|yesno:"Active,Inactive" }}
+                                    </span>
+                                </div>
+                                <div class="mt-2 flex flex-col sm:flex-row sm:flex-wrap">
+                                    <div class="flex items-center text-sm text-gray-500 mr-6">
+                                        <span class="font-medium">Company:</span> {{ job.company }}
+                                    </div>
+                                    <div class="flex items-center text-sm text-gray-500 mr-6">
+                                        <span class="font-medium">Location:</span> {{ job.location }}
+                                    </div>
+                                    <div class="flex items-center text-sm text-gray-500">
+                                        <span class="font-medium">Applications:</span> {{ job.applications.count }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ml-4 flex-shrink-0 flex space-x-2">
+                                <a href="{% url 'job_detail' job.id %}" class="text-blue-600 hover:text-blue-900">View</a>
+                                <a href="{% url 'edit_job' job.id %}" class="text-green-600 hover:text-green-900">Edit</a>
+                                <a href="{% url 'delete_job' job.id %}" class="text-red-600 hover:text-red-900">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% else %}
+        <div class="bg-white shadow overflow-hidden sm:rounded-md p-8 text-center">
+            <p class="text-gray-500 text-lg">You haven't posted any jobs yet.</p>
+            <a href="{% url 'post_job' %}" class="inline-block mt-4 text-blue-600 hover:text-blue-900">Post your first job now!</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
